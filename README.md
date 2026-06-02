@@ -46,7 +46,7 @@
 
 ## 💡 Motivation
 
-During development of [Second Eye Nepal](https://secondeyenepal.com)'s **ChestGuru** clinical
+During development of [Second Eye Nepal](https://www.secondeye.com.np/)'s **ChestGuru** clinical
 decision support system, a recurring problem emerged: small language models can extract
 named entities (drug names, diagnoses, symptoms) but they cannot *reason* about them.
 A physician reading an ECG doesn't just label it — they construct a causal narrative:
