@@ -1,0 +1,78 @@
+# ── Python ─────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.Python
+.venv/
+venv/
+env/
+pip-wheel-metadata/
+
+# ── Environment ────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Jupyter ────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Model weights & checkpoints (large files — use HF Hub) ─────
+results/checkpoints/
+results/final_adapter/
+results/*.safetensors
+results/*.bin
+results/*.pt
+results/*.pth
+*.gguf
+
+# ── Datasets (download, don't commit) ──────────────────────────
+data/raw/
+data/processed/
+*.jsonl
+*.parquet
+*.arrow
+*.cache
+
+# ── Wandb ──────────────────────────────────────────────────────
+wandb/
+
+# ── HuggingFace cache ──────────────────────────────────────────
+.cache/
+~/.cache/huggingface/
+
+# ── IDE ────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Logs ───────────────────────────────────────────────────────
+logs/
+*.log
+runs/
+lightning_logs/
+
+# ── Testing ────────────────────────────────────────────────────
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# ── Typing ─────────────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ── OS ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
