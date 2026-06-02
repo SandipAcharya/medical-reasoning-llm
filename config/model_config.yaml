@@ -1,0 +1,64 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  medical-reasoning-llm — Model & Hardware Configuration
+#  Switch profiles based on your hardware.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Supported Model Variants ──────────────────────────────────────────────────
+models:
+  default: "qwen2.5-3b"
+
+  qwen2.5-3b:
+    hf_name: "Qwen/Qwen2.5-3B-Instruct"
+    parameter_count: "3B"
+    context_length: 32768
+    architecture: "Qwen2"
+    recommended_hardware: "T4 (16GB)"
+    notes: "Default. Trains in ~4hrs on T4 with 5K samples."
+
+  qwen2.5-7b:
+    hf_name: "Qwen/Qwen2.5-7B-Instruct"
+    parameter_count: "7B"
+    context_length: 32768
+    architecture: "Qwen2"
+    recommended_hardware: "A100 (40GB)"
+    notes: "Higher quality. Requires A100 or multi-T4 setup."
+
+  mistral-7b:
+    hf_name: "mistralai/Mistral-7B-Instruct-v0.3"
+    parameter_count: "7B"
+    context_length: 32768
+    architecture: "Mistral"
+    recommended_hardware: "A100 (40GB)"
+    notes: "Alternative backbone if Qwen licensing is a concern."
+
+# ── Hardware Profiles ─────────────────────────────────────────────────────────
+hardware:
+  # Google Colab T4 (default)
+  t4_16gb:
+    per_device_train_batch_size: 2
+    gradient_accumulation_steps: 4
+    fp16: true
+    bf16: false
+    load_in_4bit: true
+    max_seq_length: 2048
+    recommended_model: "qwen2.5-3b"
+
+  # Google Colab A100
+  a100_40gb:
+    per_device_train_batch_size: 4
+    gradient_accumulation_steps: 2
+    fp16: false
+    bf16: true
+    load_in_4bit: false               # can use full 16-bit on A100
+    max_seq_length: 4096
+    recommended_model: "qwen2.5-7b"
+
+  # Local RTX 3090 / 4090 (24GB)
+  rtx_24gb:
+    per_device_train_batch_size: 2
+    gradient_accumulation_steps: 4
+    fp16: true
+    bf16: false
+    load_in_4bit: true
+    max_seq_length: 2048
+    recommended_model: "qwen2.5-3b"

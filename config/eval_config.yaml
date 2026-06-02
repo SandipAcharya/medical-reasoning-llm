@@ -1,0 +1,57 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  medical-reasoning-llm — Evaluation Configuration
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Paths ─────────────────────────────────────────────────────────────────────
+paths:
+  results_dir: "./results"
+  report_filename: "eval_report.json"
+  qualitative_filename: "qualitative_examples.json"
+
+# ── Metrics ───────────────────────────────────────────────────────────────────
+metrics:
+  # Exact match on the final answer (after reasoning chain)
+  answer_accuracy:
+    enabled: true
+    normalize: true                   # lowercase, strip punctuation
+
+  # ROUGE-L between generated CoT and gold CoT
+  rouge_l:
+    enabled: true
+    use_stemmer: false
+
+  # Structural quality of the reasoning chain
+  chain_completeness:
+    enabled: true
+    min_steps: 3                      # expect at least 3 reasoning steps
+
+  # Length statistics
+  chain_length:
+    enabled: true
+    unit: "tokens"
+
+  # Optional: GPT-4 clinical coherence judge (requires OpenAI API key)
+  gpt4_judge:
+    enabled: false
+    model: "gpt-4o"
+    rubric: "docs/gpt4_judge_rubric.md"
+    scale: 5                          # 1–5 rating
+
+# ── Generation Settings (used during eval) ───────────────────────────────────
+generation:
+  max_new_tokens: 1024
+  do_sample: false                    # greedy for reproducibility
+  temperature: 1.0
+  top_p: 1.0
+  repetition_penalty: 1.1
+
+# ── Qualitative Examples ──────────────────────────────────────────────────────
+qualitative:
+  num_examples: 10                    # save N examples to file
+  include_gold: true                  # include gold CoT alongside generated
+
+# ── Comparison ────────────────────────────────────────────────────────────────
+comparison:
+  # Evaluate base model (before fine-tuning) for delta computation
+  eval_base_model: true
+  base_model_name: "Qwen/Qwen2.5-3B-Instruct"

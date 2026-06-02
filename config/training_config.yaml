@@ -1,0 +1,107 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  medical-reasoning-llm — Training Configuration
+#  All hyperparameters live here. Override via CLI: --config <path>
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Experiment Identity ───────────────────────────────────────────────────────
+experiment:
+  name: "qwen2.5-3b-medical-cot-qlora"
+  version: "v1.0"
+  seed: 42
+  tags: ["qlora", "medical", "chain-of-thought", "qwen2.5"]
+
+# ── Paths ─────────────────────────────────────────────────────────────────────
+paths:
+  output_dir: "./results"
+  log_dir: "./logs"
+  cache_dir: "~/.cache/huggingface"
+
+# ── Dataset ───────────────────────────────────────────────────────────────────
+data:
+  hf_dataset_name: "FreedomIntelligence/medical-o1-reasoning-SFT"
+  hf_dataset_split: "train"           # source split to draw from
+  num_samples: 5000                   # subset size (5K of 25K)
+  train_ratio: 0.80                   # → 4000 train samples
+  val_ratio:   0.10                   # → 500  val   samples
+  test_ratio:  0.10                   # → 500  test  samples
+  max_seq_length: 2048
+  # Column mapping in the HF dataset
+  question_column: "Question"
+  cot_column: "Complex_CoT"
+  answer_column: "Response"
+
+# ── Model ─────────────────────────────────────────────────────────────────────
+model:
+  name: "Qwen/Qwen2.5-3B-Instruct"
+  trust_remote_code: true
+  torch_dtype: "float16"              # base model dtype (non-quantized layers)
+
+# ── Quantization (BitsAndBytes) ───────────────────────────────────────────────
+quantization:
+  load_in_4bit: true
+  bnb_4bit_quant_type: "nf4"          # nf4 | fp4
+  bnb_4bit_compute_dtype: "float16"
+  bnb_4bit_use_double_quant: true     # saves ~0.4 bits per parameter
+
+# ── LoRA (PEFT) ───────────────────────────────────────────────────────────────
+lora:
+  r: 16                               # rank — higher = more params, more capacity
+  lora_alpha: 32                      # scaling factor (alpha/r = 2.0)
+  lora_dropout: 0.05
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+# ── SFTTrainer / Training Arguments ──────────────────────────────────────────
+training:
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 4      # effective batch size = 2 × 4 = 8
+  learning_rate: 2.0e-4
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  fp16: true
+  bf16: false                         # set true for A100; false for T4
+  optim: "paged_adamw_32bit"          # memory-efficient optimizer
+  # Logging & checkpointing
+  logging_steps: 25
+  eval_steps: 100
+  save_steps: 200
+  save_total_limit: 3
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+  # Misc
+  dataloader_num_workers: 2
+  remove_unused_columns: false
+  report_to: "none"                   # set to "wandb" to enable tracking
+  push_to_hub: false
+  hub_model_id: ""                    # fill in if push_to_hub: true
+
+# ── SFT-specific ──────────────────────────────────────────────────────────────
+sft:
+  packing: false                      # disable for variable-length CoT
+  dataset_text_field: "text"          # field name after formatting
+
+# ── Chat Template ─────────────────────────────────────────────────────────────
+prompt:
+  system_message: |
+    You are an expert physician with deep knowledge of internal medicine,
+    cardiology, neurology, and emergency medicine. When presented with a
+    clinical scenario, you reason through it systematically before providing
+    your final answer. Your reasoning should include: symptom analysis,
+    relevant anatomy and physiology, differential diagnosis with reasoning,
+    and evidence-based management. Always separate your thinking process
+    from your final answer.
+  reasoning_header: "Let me reason through this step by step:"
+  answer_header: "Final Answer:"
