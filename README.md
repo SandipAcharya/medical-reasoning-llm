@@ -127,10 +127,10 @@ Training Setup:
 
 | Metric | Base Qwen2.5-3B | Fine-tuned (ours) | Δ |
 |---|---|---|---|
-| Answer Accuracy (exact match) | — | — | — |
-| ROUGE-L vs. Gold CoT | — | — | — |
-| Clinical Coherence (GPT-4 judge, 1–5) | — | — | — |
-| Avg. Reasoning Chain Length (tokens) | — | — | — |
+| Answer Accuracy (keyword overlap) | — | **74.00%** (37/50) | — |
+| ROUGE-L vs. Gold CoT | — | **0.2014** | — |
+| Chain Completeness | — | **100%** (50/50) | — |
+| Degenerate Outputs | — | **2.0%** (1/50) | — |
 
 *Full results, loss curves, and qualitative examples in [`results/`](results/).*
 
