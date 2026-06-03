@@ -172,26 +172,24 @@ class MedicalReasoningPipeline:
         bnb_config = None
         if load_in_4bit:
             bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_use_double_quant=True,
+                load_in_8bit=True, # Force 8-bit quantization locally to bypass the 4-bit .to() bug!
             )
 
         logger.info("Loading base model: %s", base_model)
         model = AutoModelForCausalLM.from_pretrained(
             base_model,
-            quantization_config=bnb_config,
-            torch_dtype=torch.float16 if not load_in_4bit else None,
+            torch_dtype=torch.float16,
             device_map=device_map,
             trust_remote_code=True,
+            offload_folder="offload",
         )
         model.config.use_cache = True  # Enable KV cache for inference
 
         if adapter_path is not None:
             from peft import PeftModel
             logger.info("Loading LoRA adapter from: %s", adapter_path)
-            model = PeftModel.from_pretrained(model, str(adapter_path), is_trainable=False)
+            # PEFT also needs offload_folder if the base model is split!
+            model = PeftModel.from_pretrained(model, str(adapter_path), offload_folder="offload")
             logger.info("Adapter loaded")
 
         model.eval()

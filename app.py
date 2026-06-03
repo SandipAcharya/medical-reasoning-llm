@@ -29,7 +29,8 @@ def init_pipeline():
             pipeline = MedicalReasoningPipeline.from_pretrained(
                 base_model="Qwen/Qwen2.5-3B-Instruct",
                 adapter_path="./results/final_adapter",
-                load_in_4bit=load_in_4bit,
+                load_in_4bit=False,
+                device_map="auto",
             )
             logger.info("Pipeline initialized successfully.")
         except Exception as e:
