@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Medical Reasoning System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Background Animated Gradients -->
+    <div class="bg-gradient bg-gradient-1"></div>
+    <div class="bg-gradient bg-gradient-2"></div>
+    <div class="bg-gradient bg-gradient-3"></div>
+
+    <div class="container">
+        <header class="glass-panel main-header">
+            <div class="logo">
+                <i class="fa-solid fa-stethoscope"></i>
+            </div>
+            <div class="header-text">
+                <h1>Medical Reasoning LLM</h1>
+                <p>Powered by Qwen2.5-3B & Custom LoRA Adapter</p>
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <!-- Left Column: Input -->
+            <div class="glass-panel input-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-file-medical"></i> Clinical Scenario</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="subtitle">Enter patient history, symptoms, and lab results below.</p>
+                    <div class="textarea-wrapper">
+                        <textarea id="patient-input" placeholder="e.g. A 58-year-old male with a 20-pack-year smoking history presents with 3 weeks of worsening exertional dyspnea, orthopnea, and bilateral leg edema. JVP is elevated at 10 cm. Chest X-ray shows cardiomegaly and bilateral pleural effusions. BNP is 1,450 pg/mL. Echo shows EF 25%. What is the diagnosis and initial management?"></textarea>
+                    </div>
+                    <div class="action-bar">
+                        <button id="analyze-btn" class="primary-btn">
+                            <span class="btn-text">Generate Clinical Reasoning</span>
+                            <span class="btn-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                            <div class="spinner hidden"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Outputs -->
+            <div class="output-container">
+                
+                <!-- Internal Monologue / Reasoning Chain -->
+                <div class="glass-panel output-panel reasoning-panel">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-brain"></i> AI Internal Monologue</h2>
+                        <span class="badge" id="time-badge">0.0s</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="content-box" id="reasoning-output">
+                            <div class="empty-state">
+                                <i class="fa-solid fa-microchip"></i>
+                                <p>Awaiting clinical scenario...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Answer -->
+                <div class="glass-panel output-panel final-answer-panel">
+                    <div class="panel-header highlight-header">
+                        <h2><i class="fa-solid fa-user-doctor"></i> Clinical Conclusion</h2>
+                    </div>
+                    <div class="panel-body">
+                        <div class="content-box" id="final-answer-output">
+                            <div class="empty-state">
+                                <i class="fa-solid fa-file-signature"></i>
+                                <p>Final diagnosis and management plan will appear here.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="disclaimer">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span id="confidence-note">RESEARCH PROTOTYPE — Not validated for clinical use. All outputs must be reviewed by a licensed healthcare professional.</span>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
