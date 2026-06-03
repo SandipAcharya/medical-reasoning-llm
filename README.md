@@ -127,8 +127,8 @@ Training Setup:
 
 | Metric | Base Qwen2.5-3B | Fine-tuned (ours) | Δ |
 |---|---|---|---|
-| Answer Accuracy (keyword overlap) | — | **74.00%** (37/50) | — |
-| ROUGE-L vs. Gold CoT | — | **0.2014** | — |
+| Answer Accuracy (keyword overlap) | 10.00% | **74.00%** (37/50) | **+64.00%** |
+| ROUGE-L vs. Gold CoT | 0.1675 | **0.2014** | **+0.0340** |
 | Chain Completeness | — | **100%** (50/50) | — |
 | Degenerate Outputs | — | **2.0%** (1/50) | — |
 
