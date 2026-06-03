@@ -1,4 +1,10 @@
 import os
+# Force HuggingFace to download to D: drive since C: is out of space
+os.environ["HF_HOME"] = os.path.join(os.getcwd(), "hf_cache")
+from dotenv import load_dotenv
+load_dotenv()
+os.environ["HF_TOKEN"] = os.getenv("HF_TOKEN", "")
+
 import logging
 from flask import Flask, render_template, request, jsonify
 from src.medical_reasoning.inference.pipeline import MedicalReasoningPipeline
