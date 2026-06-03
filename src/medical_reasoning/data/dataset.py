@@ -91,6 +91,7 @@ class MedicalReasoningDataset:
 
         raw_full = load_dataset(
             self.config.hf_dataset_name,
+            "en",
             split=self.config.hf_dataset_split,
             cache_dir=self.cache_dir,
         )
