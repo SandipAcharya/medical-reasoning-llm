@@ -170,13 +170,30 @@ print(result.final_answer)
 
 ---
 
-## 🖼️ Demo Screenshots
+## 🎥 Live Demo
+
+> Real-time token streaming on a local RTX 3050 Ti (4GB VRAM) — no cloud GPU needed!
+
+<div align="center">
+
+**[▶️ Click to watch the full demo video](docs/assets/Demo.MP4)**
+
+<video src="docs/assets/Demo.MP4" controls width="100%" style="border-radius: 12px; max-width: 900px;">
+  Your browser does not support the video tag. 
+  <a href="docs/assets/Demo.MP4">Download the demo video</a>
+</video>
+
+</div>
+
+---
+
+## 🖼️ Screenshots
 
 > Live inference running locally on an RTX 3050 Ti (4GB VRAM) with 4-bit QLoRA quantization.
 
 <div align="center">
 
-| Input & Reasoning Chain | Streaming Output | Final Answer |
+| Input Panel | Streaming Reasoning | Final Answer |
 |:---:|:---:|:---:|
 | ![Inference 1](docs/assets/inference_img1.png) | ![Inference 2](docs/assets/inference_img2.png) | ![Inference 3](docs/assets/inference_img3.png) |
 
@@ -405,6 +422,7 @@ medical-reasoning-llm/
 │
 ├── docs/
 │   ├── assets/
+│   │   ├── Demo.MP4               # Full inference demo video
 │   │   ├── inference_img1.png     # UI screenshot — Input Panel
 │   │   ├── inference_img2.png     # UI screenshot — Streaming Reasoning
 │   │   └── inference_img3.png     # UI screenshot — Final Answer
