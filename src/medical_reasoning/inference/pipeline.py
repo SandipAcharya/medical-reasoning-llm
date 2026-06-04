@@ -283,6 +283,50 @@ class MedicalReasoningPipeline:
             num_tokens_generated=num_tokens,
         )
 
+    def reason_stream(self, question: str):
+        """
+        Stream tokens one-by-one as the model generates them (like DeepSeek/Claude).
+        Yields raw text chunks as they are produced.
+        """
+        from transformers import TextIteratorStreamer
+        from threading import Thread
+
+        messages = [
+            {"role": "system", "content": self.system_message},
+            {"role": "user", "content": question},
+        ]
+        prompt = self.tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+        inputs = self.tokenizer(
+            prompt, return_tensors="pt", add_special_tokens=False
+        ).to(self.model.device)
+
+        streamer = TextIteratorStreamer(
+            self.tokenizer, skip_prompt=True, skip_special_tokens=True
+        )
+
+        generation_kwargs = dict(
+            **inputs,
+            max_new_tokens=self.max_new_tokens,
+            do_sample=self.do_sample,
+            temperature=self.temperature if self.do_sample else 1.0,
+            repetition_penalty=self.repetition_penalty,
+            pad_token_id=self.tokenizer.pad_token_id,
+            eos_token_id=self.tokenizer.eos_token_id,
+            streamer=streamer,
+        )
+
+        # Run generation in a background thread so we can stream from the main thread
+        thread = Thread(target=self.model.generate, kwargs=generation_kwargs)
+        thread.start()
+
+        for new_text in streamer:
+            yield new_text
+
+        thread.join()
+
+
     def reason_batch(self, questions: List[str]) -> List[ReasoningResult]:
         """
         Run inference on multiple questions sequentially.

@@ -369,3 +369,18 @@ textarea::placeholder {
         height: 200px;
     }
 }
+
+/* Streaming Typing Cursor — like DeepSeek / Claude */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.typing-cursor {
+    display: inline-block;
+    color: var(--primary-light);
+    font-weight: bold;
+    animation: blink 0.8s step-start infinite;
+    margin-left: 2px;
+    vertical-align: middle;
+}

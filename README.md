@@ -170,6 +170,20 @@ print(result.final_answer)
 
 ---
 
+## 🖼️ Demo Screenshots
+
+> Live inference running locally on an RTX 3050 Ti (4GB VRAM) with 4-bit QLoRA quantization.
+
+<div align="center">
+
+| Input & Reasoning Chain | Streaming Output | Final Answer |
+|:---:|:---:|:---:|
+| ![Inference 1](docs/assets/inference_img1.png) | ![Inference 2](docs/assets/inference_img2.png) | ![Inference 3](docs/assets/inference_img3.png) |
+
+</div>
+
+---
+
 ## 🛠️ Installation
 
 ### Option A — Local (GPU required, 4 GB+ VRAM for 4-bit inference)
@@ -390,6 +404,10 @@ medical-reasoning-llm/
 │   └── test_evaluation.py
 │
 ├── docs/
+│   ├── assets/
+│   │   ├── inference_img1.png     # UI screenshot — Input Panel
+│   │   ├── inference_img2.png     # UI screenshot — Streaming Reasoning
+│   │   └── inference_img3.png     # UI screenshot — Final Answer
 │   ├── training_guide.md
 │   └── evaluation_guide.md
 │
