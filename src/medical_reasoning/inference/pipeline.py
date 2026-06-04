@@ -172,13 +172,17 @@ class MedicalReasoningPipeline:
         bnb_config = None
         if load_in_4bit:
             bnb_config = BitsAndBytesConfig(
-                load_in_8bit=True, # Force 8-bit quantization locally to bypass the 4-bit .to() bug!
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_use_double_quant=True,
             )
 
         logger.info("Loading base model: %s", base_model)
         model = AutoModelForCausalLM.from_pretrained(
             base_model,
-            torch_dtype=torch.float16,
+            quantization_config=bnb_config,
+            torch_dtype=torch.float16 if not load_in_4bit else None,
             device_map=device_map,
             trust_remote_code=True,
             offload_folder="offload",
@@ -188,9 +192,30 @@ class MedicalReasoningPipeline:
         if adapter_path is not None:
             from peft import PeftModel
             logger.info("Loading LoRA adapter from: %s", adapter_path)
-            # PEFT also needs offload_folder if the base model is split!
-            model = PeftModel.from_pretrained(model, str(adapter_path), offload_folder="offload")
+            # autocast_adapter_dtype=False prevents PEFT from calling .to() on the model!
+            model = PeftModel.from_pretrained(
+                model, 
+                str(adapter_path), 
+                autocast_adapter_dtype=False,
+                offload_folder="offload"
+            )
             logger.info("Adapter loaded")
+
+        # CRITICAL FIX: Manually move all non-quantized layers (Embeddings, LayerNorms, LoRA Adapters) to GPU 0
+        logger.info("Forcing non-quantized layers to GPU to bypass accelerate bugs...")
+        for name, param in model.named_parameters():
+            if str(param.device) == "cpu" or str(param.device) == "meta":
+                if not hasattr(param, "quant_state") and param.dtype != torch.uint8:
+                    try:
+                        param.data = param.data.to("cuda:0")
+                    except Exception:
+                        pass
+        for name, buffer in model.named_buffers():
+            if str(buffer.device) == "cpu" or str(buffer.device) == "meta":
+                try:
+                    buffer.data = buffer.data.to("cuda:0")
+                except Exception:
+                    pass
 
         model.eval()
         return cls(
