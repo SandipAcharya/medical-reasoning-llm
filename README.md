@@ -138,7 +138,16 @@ Training Setup:
 
 ## ⚡ Quick Start
 
-**Inference only (no training required):**
+**1. Interactive Clinical UI (Recommended):**
+
+We provide a beautiful, glassmorphism-styled Flask web interface for real-time clinical reasoning.
+
+```bash
+python app.py
+# Open http://127.0.0.1:5000 in your browser
+```
+
+**2. Python API (Scripting):**
 
 ```python
 from src.medical_reasoning.inference.pipeline import MedicalReasoningPipeline
@@ -163,7 +172,9 @@ print(result.final_answer)
 
 ## 🛠️ Installation
 
-### Option A — Local (GPU required, 8 GB+ VRAM for inference)
+### Option A — Local (GPU required, 4 GB+ VRAM for 4-bit inference)
+
+Our custom pipeline includes a robust workaround for Windows/PyTorch quantization bugs, allowing the 3B model to run flawlessly on consumer GPUs (e.g., RTX 3050 Ti) with just 4GB VRAM!
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/medical-reasoning-llm.git
@@ -323,6 +334,13 @@ python scripts/infer.py \
 ```
 medical-reasoning-llm/
 │
+├── app.py                     # Flask Web Interface entry point
+├── templates/
+│   └── index.html             # UI HTML Template
+├── static/
+│   ├── css/style.css          # Glassmorphism UI Styles
+│   └── js/script.js           # Real-time typing & API handling
+│
 ├── README.md
 ├── LICENSE
 ├── .gitignore
@@ -388,8 +406,9 @@ medical-reasoning-llm/
 - [x] Phase 3 — Model + QLoRA training pipeline
 - [x] Phase 4 — Evaluation (ROUGE-L, accuracy, GPT-4 judge)
 - [x] Phase 5 — Colab notebook (14-cell end-to-end)
-- [ ] Phase 6 — Push adapter to HuggingFace Hub
-- [ ] Phase 7 — Gradio demo
+- [x] Phase 6 — Interactive Web UI (Flask + Glassmorphism)
+- [x] Phase 7 — Advanced Local GPU optimization (4-bit manual VRAM routing)
+- [ ] Push adapter to HuggingFace Hub
 - [ ] Extend to Qwen2.5-7B with A100
 
 ---
